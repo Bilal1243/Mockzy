@@ -1,0 +1,21 @@
+/* @keyframes waveMove {
+    from {
+      background-position-x: 0%;
+    }
+    to {
+      background-position-x: 200%;
+    }
+  }
+  
+  .custom-wave {
+    background: linear-gradient(to bottom, #3b82f6 50%, transparent 50%), 
+                url('https://i.ibb.co/ZVh01dm/wave-pattern.png');
+    background-size: 100% 100%, 200% 100%;
+    background-repeat: no-repeat, repeat-x;
+    background-position: top, 0% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: waveMove 4s linear infinite;
+    color: transparent;
+  }
+   */
