@@ -9,7 +9,7 @@ organizationRoute.route('/').get(protect, isOrganization, getAllUsers).post(Orga
 
 organizationRoute.route('/changeStatus').put(changeAccountStatus)
 
-organizationRoute.route('/createUser').post(createUser)
+organizationRoute.route('/createUser').post(protect,isOrganization,createUser)
 
 organizationRoute.route('/getOrganization').get(protect, isOrganization, getOrganizationById)
 

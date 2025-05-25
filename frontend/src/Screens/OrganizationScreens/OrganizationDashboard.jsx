@@ -92,16 +92,16 @@ const OrganizationDashboard = () => {
               className="w-16 h-16 mb-4"
             />
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              Add Departments
+              Manage Departments
             </h3>
             <p className="text-gray-500 text-center">
               Create and manage organizational departments.
             </p>
             <Link
-              to="/organization/add-departments"
+              to="/organization/manage-departments"
               className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
             >
-              Add Now
+              Manage Departments
             </Link>
           </div>
 
@@ -113,7 +113,7 @@ const OrganizationDashboard = () => {
               className="w-16 h-16 mb-4"
             />
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              Add Mock Interviews
+              Manage Mock Interviews
             </h3>
             <p className="text-gray-500 text-center">
               Schedule and organize mock interview sessions.

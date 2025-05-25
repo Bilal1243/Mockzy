@@ -6,6 +6,8 @@ import AddUserScreen from "../Screens/OrganizationScreens/AddUser";
 import OrganizationDashboard from "../Screens/OrganizationScreens/OrganizationDashboard";
 import ManageUsers from "../Screens/OrganizationScreens/ManageUsers";
 import SocketConnection from "../SocketConnection";
+import AddDepartment from "../Screens/OrganizationScreens/AddDepartment";
+import ManageDepartments from "../Screens/OrganizationScreens/ManageDepartments";
 
 function AdminRoutes() {
   return (
@@ -19,6 +21,14 @@ function AdminRoutes() {
           <Route path="/" element={<OrganizationDashboard />} />
           <Route path="/organization/add-user" element={<AddUserScreen />} />
           <Route path="/organization/manage-users" element={<ManageUsers />} />
+          <Route
+            path="/organization/manage-departments"
+            element={<ManageDepartments />}
+          />
+          <Route
+            path="/organization/add-department"
+            element={<AddDepartment />}
+          />
 
           <Route path="*" element={<NotFound />} />
         </Route>

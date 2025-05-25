@@ -5,7 +5,8 @@ import bcrypt from 'bcrypt';
 import Faculties from "../models/facultyModel.js";
 import Students from "../models/studentsModel.js";
 import mongoose from "mongoose";
-
+import Departments from "../models/departmentModel.js";
+import sendNotification from "../utils/sendNotification.js";
 
 const RegisterOrganization = expressAsyncHandler(async (req, res) => {
     let { password, organizationName, description, email } = req.body
@@ -66,7 +67,7 @@ const changeAccountStatus = expressAsyncHandler(async (req, res) => {
 })
 
 const createUser = expressAsyncHandler(async (req, res) => {
-    const { name, email, organization, role } = req.body;
+    const { name, email, organization, role, department, faculty } = req.body;
 
     if (!name || !email || !organization || !role) {
         return res.status(400).json({ message: 'All fields are required' });
@@ -97,28 +98,53 @@ const createUser = expressAsyncHandler(async (req, res) => {
 
     const newUser = { _id: user._id, name, email, role };
 
+    let findDepartment = await Departments.findById(department)
+
     if (role === 'faculty') {
         let newFaculty = await Faculties.create({
             name,
             email,
-            organization
+            organization,
+            department
         })
         user.userId = newFaculty._id;
         await user.save();
+
+        await sendNotification({
+            recipients: findOrganization.faculties,
+            sender: req.user._id,
+            title: "Welcome our new Faculty",
+            message: `Let's welcome our new faculty ${name}`,
+            type: "newFaculty_added",
+            link: null
+        });
         findOrganization.faculties.push(newUser);
     } else if (role === 'student') {
         let newStudent = await Students.create({
             name,
             email,
-            organization
+            organization,
+            department,
+            faculty
         })
         user.userId = newStudent._id;
         await user.save();
+        console.log(faculty)
+        await sendNotification({
+            recipients: [new mongoose.Types.ObjectId(faculty)],
+            sender: req.user._id,
+            title: "New Student has been assigned to you",
+            message: `${name} has been assigned to you`,
+            type: "newStudent_added",
+            link: null
+        });
         findOrganization.students.push(newUser);
     } else {
         return res.status(400).json({ message: 'Invalid role specified' });
     }
 
+    findDepartment.members.push(user._id)
+    await findDepartment.save()
     await findOrganization.save();
 
     res.status(201).json({ message: 'User added successfully' });
@@ -184,6 +210,28 @@ const getOrganizationById = expressAsyncHandler(async (req, res) => {
 
 })
 
+const getAllFaculties = expressAsyncHandler(async (req, res) => {
+    const { organization } = req.query;
+    const faculties = await Users.aggregate([
+        {
+            $lookup: {
+                from: 'faculties',
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'userDetails',
+            },
+        },
+        {
+            $unwind: '$userDetails',
+        },
+        {
+            $match: { 'userDetails.organization': new mongoose.Types.ObjectId(organization) }
+        }
+    ]);
+
+    res.json(faculties);
+})
+
 
 
 
@@ -192,5 +240,6 @@ export {
     changeAccountStatus,
     createUser,
     getAllUsers,
-    getOrganizationById
+    getOrganizationById,
+    getAllFaculties
 }

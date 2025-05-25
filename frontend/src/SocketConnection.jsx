@@ -1,42 +1,39 @@
-// components/SocketManager.jsx
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { io } from "socket.io-client";
+import { socket } from "./utils/socket"; // update path as needed
 import { setOnlineUsers } from "./slices/onlineUsersSlice";
 
 const SocketConnection = () => {
   const { mockzyUser: user } = useSelector((state) => state.auth);
-  const socket = useRef(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (user?._id) {
-      socket.current = io("http://localhost:5000");
+      if (!socket.connected) socket.connect();
 
-      socket.current.emit("new-user-add", user._id);
+      socket.emit("new-user-add", user._id);
 
-      socket.current.on("get-users", (users) => {
+      socket.on("get-users", (users) => {
         dispatch(setOnlineUsers(users));
       });
     }
 
     return () => {
-      if (socket.current) {
-        socket.current.disconnect();
-      }
+      socket.off("get-users");
+      if (socket.connected) socket.disconnect();
     };
   }, [user, dispatch]);
 
   useEffect(() => {
     const handleFocus = () => {
       if (user?._id) {
-        socket.current.emit("new-user-add", user._id);
+        socket.emit("new-user-add", user._id);
       }
     };
 
     const handleBlur = () => {
       if (user?._id) {
-        socket.current.emit("offline");
+        socket.emit("offline", user._id);
       }
     };
 
@@ -49,7 +46,7 @@ const SocketConnection = () => {
     };
   }, [user]);
 
-  return null; // this component just manages the socket logic
+  return null;
 };
 
 export default SocketConnection;
