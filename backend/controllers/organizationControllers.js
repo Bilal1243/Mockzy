@@ -110,14 +110,16 @@ const createUser = expressAsyncHandler(async (req, res) => {
         user.userId = newFaculty._id;
         await user.save();
 
-        await sendNotification({
-            recipients: findOrganization.faculties,
-            sender: req.user._id,
-            title: "Welcome our new Faculty",
-            message: `Let's welcome our new faculty ${name}`,
-            type: "newFaculty_added",
-            link: null
-        });
+        for (let recipient of findOrganization?.faculties) {
+            await sendNotification({
+                recipient: recipient._id,
+                sender: req.user._id,
+                title: "Welcome our new Faculty",
+                message: `Let's welcome our new faculty ${name}`,
+                type: "newFaculty_added",
+                link: null
+            });
+        }
         findOrganization.faculties.push(newUser);
     } else if (role === 'student') {
         let newStudent = await Students.create({
@@ -130,7 +132,7 @@ const createUser = expressAsyncHandler(async (req, res) => {
         user.userId = newStudent._id;
         await user.save();
         await sendNotification({
-            recipients: [new mongoose.Types.ObjectId(faculty)],
+            recipient: faculty,
             sender: req.user._id,
             title: "New Student has been assigned to you",
             message: `${name} has been assigned to you`,
