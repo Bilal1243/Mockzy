@@ -5,6 +5,11 @@ const io = getIO();
 
 const sendNotification = async ({ recipients, sender, title, message, type, link }) => {
   for (const recipient of recipients) {
+    if (!recipient) {
+      console.warn("⚠️ Skipping undefined recipient in notification");
+      continue;
+    }
+
     const newNotif = await Notification.create({
       recipient,
       sender,

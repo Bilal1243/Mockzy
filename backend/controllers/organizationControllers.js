@@ -69,8 +69,8 @@ const changeAccountStatus = expressAsyncHandler(async (req, res) => {
 const createUser = expressAsyncHandler(async (req, res) => {
     const { name, email, organization, role, department, faculty } = req.body;
 
-    if (!name || !email || !organization || !role) {
-        return res.status(400).json({ message: 'All fields are required' });
+    if (!name || !email || !organization || !role || (role === "student" && !faculty)) {
+        return res.status(400).json({ message: 'All required fields must be provided' });
     }
 
     const findOrganization = await Organization.findById(organization);
