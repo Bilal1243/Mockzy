@@ -4,6 +4,8 @@ import Notification from "../models/NotificationModel.js";
 const io = getIO();
 
 const sendNotification = async ({ recipients, sender, title, message, type, link }) => {
+    console.log(recipients)
+
   for (const recipient of recipients) {
     const newNotif = await Notification.create({
       recipient,
