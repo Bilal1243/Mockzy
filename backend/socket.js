@@ -5,7 +5,7 @@ let io
 
 const initSocket = (server) => {
     io = new Server(server, {
-        cors: { origin: "http://localhost:5173" },
+        cors: { origin: "https://mockzy-frontend.onrender.com" },
     });
 
     io.on("connection", (socket) => {
