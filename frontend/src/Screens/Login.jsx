@@ -24,6 +24,7 @@ export default function Login() {
     try {
       e.preventDefault();
       let response = await loginUser({ ...form }).unwrap();
+      console.log(response)
       dispatch(setCredentails({ ...response }));
       navigate("/");
     } catch (error) {
