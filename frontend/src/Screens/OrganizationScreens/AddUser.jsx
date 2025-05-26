@@ -78,7 +78,8 @@ const AddUserScreen = () => {
     try {
       toast.promise(createUser(payload).unwrap(), {
         loading: "Creating new user...",
-        success: () => {
+        success: (data) => {
+          console.log(data)
           setTimeout(() => {
             refetch();
             refetchDepartments();
