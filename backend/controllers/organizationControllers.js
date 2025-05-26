@@ -120,7 +120,6 @@ const createUser = expressAsyncHandler(async (req, res) => {
         });
         findOrganization.faculties.push(newUser);
     } else if (role === 'student') {
-        console.log(faculty)
         let newStudent = await Students.create({
             name,
             email,
@@ -131,7 +130,7 @@ const createUser = expressAsyncHandler(async (req, res) => {
         user.userId = newStudent._id;
         await user.save();
         await sendNotification({
-            recipients: [faculty],
+            recipients: [new mongoose.Types.ObjectId(faculty)],
             sender: req.user._id,
             title: "New Student has been assigned to you",
             message: `${name} has been assigned to you`,

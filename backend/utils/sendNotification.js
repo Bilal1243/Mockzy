@@ -4,6 +4,8 @@ import Notification from "../models/NotificationModel.js";
 const io = getIO();
 
 const sendNotification = async ({ recipients, sender, title, message, type, link }) => {
+
+
   for (const recipient of recipients) {
     if (!recipient) {
       console.warn("⚠️ Skipping undefined recipient in notification");
@@ -19,8 +21,12 @@ const sendNotification = async ({ recipients, sender, title, message, type, link
       link,
     });
 
+    console.log(`recipient : ${recipient}`)
+
     io.to(recipient.toString()).emit("new-notification", newNotif);
+
   }
+
 };
 
 export default sendNotification;
