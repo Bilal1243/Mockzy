@@ -4,9 +4,13 @@ let onlineUsers = [];
 let io 
 
 const initSocket = (server) => {
-    io = new Server(server, {
-        cors: { origin: "https://mockzy-frontend.onrender.com" },
-    });
+   io = new Server(server, {
+    cors: {
+        origin: "https://mockzy-frontend.onrender.com",
+        credentials: true,
+    },
+});
+
 
     io.on("connection", (socket) => {
         socket.on("new-user-add", async (newUserId) => {
