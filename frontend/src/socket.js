@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000", {
+const socket = io("https://mockzy-backend.onrender.com", {
   transports: ["websocket"], // force websocket
   reconnectionAttempts: 5,   // optional: retry 5 times
 });
