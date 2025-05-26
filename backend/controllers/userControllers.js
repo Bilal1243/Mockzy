@@ -14,6 +14,8 @@ import Faculties from "../models/facultyModel.js";
 const authUser = expressAsyncHandler(async (req, res) => {
     let { email, password } = req.body
 
+    console.log(req.body)
+
     const user = await Users.findOne({ email: email })
 
     let userData
