@@ -47,7 +47,7 @@ const AddUserScreen = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-      ...(name === "department" ? { facultyId: "" } : {}),
+      ...(name === "department" ? { faculty: "" } : {}),
     }));
 
     // If role is student and department is selected, fetch faculties

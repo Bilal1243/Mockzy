@@ -120,6 +120,7 @@ const createUser = expressAsyncHandler(async (req, res) => {
         });
         findOrganization.faculties.push(newUser);
     } else if (role === 'student') {
+        console.log(faculty)
         let newStudent = await Students.create({
             name,
             email,
