@@ -7,8 +7,6 @@ import Students from "../models/studentsModel.js";
 import mongoose from "mongoose";
 import Departments from "../models/departmentModel.js";
 import sendNotification from "../utils/sendNotification.js";
-import { getIO } from "../socket.js";
-const io = getIO()
 
 const RegisterOrganization = expressAsyncHandler(async (req, res) => {
     let { password, organizationName, description, email } = req.body
@@ -131,19 +129,13 @@ const createUser = expressAsyncHandler(async (req, res) => {
         })
         user.userId = newStudent._id;
         await user.save();
-        // await sendNotification({
-        //     recipients: [new mongoose.Types.ObjectId(faculty)],
-        //     sender: req.user._id,
-        //     title: "New Student has been assigned to you",
-        //     message: `${name} has been assigned to you`,
-        //     type: "newStudent_added",
-        //     link: null
-        // });
-        io.to(faculty).emit("new-notification", {
-            title: "Mock Scheduled",
-            message: "A new mock interview is assigned to you.",
-            recipient: faculty,
-            link: `/student/interviews`,
+        await sendNotification({
+            recipients: [new mongoose.Types.ObjectId(faculty)],
+            sender: req.user._id,
+            title: "New Student has been assigned to you",
+            message: `${name} has been assigned to you`,
+            type: "newStudent_added",
+            link: null
         });
         findOrganization.students.push(newUser);
     } else {

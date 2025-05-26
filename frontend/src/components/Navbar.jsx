@@ -80,7 +80,7 @@ const Navbar = () => {
     return () => {
       socket.off("new-notification");
     };
-  }, [mockzyUser, dispatch]);
+  },);
 
   const handleMarkAllAsRead = async () => {
     try {
