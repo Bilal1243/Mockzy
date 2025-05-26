@@ -25,6 +25,8 @@ const sendNotification = async ({ recipient, sender, title, message, type, link 
   // ✅ Check if user is online by userId
   const userOnline = onlineUsers.find(user => user.userId === recipientId);
 
+  console.log(userOnline)
+
   if (userOnline) {
     io.to(userOnline.socketId).emit("new-notification", newNotif);
     console.log(`✅ Sent live notification to socket: ${userOnline.socketId}`);
