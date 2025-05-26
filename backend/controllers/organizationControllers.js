@@ -131,7 +131,7 @@ const createUser = expressAsyncHandler(async (req, res) => {
         user.userId = newStudent._id;
         await user.save();
         await sendNotification({
-            recipients: [new mongoose.Types.ObjectId(faculty)],
+            recipients: [faculty],
             sender: req.user._id,
             title: "New Student has been assigned to you",
             message: `${name} has been assigned to you`,
