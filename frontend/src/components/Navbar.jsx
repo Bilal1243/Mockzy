@@ -12,7 +12,7 @@ import {
 import { setNotifications, addNotification } from "../slices/notificationSlice";
 import { formatDistanceToNow } from "date-fns";
 
-const socket = io("http://localhost:5000", {
+const socket = io("https://mockzy-backend.onrender.com", {
   withCredentials: true,
 });
 
