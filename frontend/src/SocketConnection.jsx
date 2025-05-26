@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { socket } from "./utils/socket"; // update path as needed
+import { socket } from "./utils/socket";
 import { setOnlineUsers } from "./slices/onlineUsersSlice";
 
 const SocketConnection = () => {
@@ -11,7 +11,11 @@ const SocketConnection = () => {
     if (user?._id) {
       if (!socket.connected) socket.connect();
 
-      socket.emit("new-user-add", user._id);
+      // Only after connect, emit join
+      socket.on("connect", () => {
+        socket.emit("new-user-add", user._id);
+        socket.emit("join", user._id); // join notification room
+      });
 
       socket.on("get-users", (users) => {
         dispatch(setOnlineUsers(users));
@@ -20,6 +24,7 @@ const SocketConnection = () => {
 
     return () => {
       socket.off("get-users");
+      socket.off("connect");
       if (socket.connected) socket.disconnect();
     };
   }, [user, dispatch]);
@@ -28,6 +33,7 @@ const SocketConnection = () => {
     const handleFocus = () => {
       if (user?._id) {
         socket.emit("new-user-add", user._id);
+        socket.emit("join", user._id); // Rejoin on focus
       }
     };
 

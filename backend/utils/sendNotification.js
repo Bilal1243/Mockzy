@@ -19,7 +19,8 @@ const sendNotification = async ({ recipients, sender, title, message, type, link
     );
 
     if (userOnline) {
-      io.to(userOnline.socketId).emit("new-notification", newNotif);
+      // ✅ Use room name (userId), NOT socketId
+      io.to(recipient.toString()).emit("new-notification", newNotif);
     }
   }
 };

@@ -15,9 +15,8 @@ import { formatDistanceToNow } from "date-fns";
 const socket = io("https://mockzy-backend.onrender.com", {
   autoConnect: false,
   withCredentials: true,
-  transports: ["websocket", "polling"] // Optional but can help avoid transport errors
+  transports: ["websocket", "polling"], // Optional but can help avoid transport errors
 });
-
 
 const Navbar = () => {
   const { mockzyUser } = useSelector((state) => state.auth);
@@ -71,12 +70,7 @@ const Navbar = () => {
   useEffect(() => {
     if (!mockzyUser?._id) return;
 
-    // Emit join when connected
-    socket.on("connect", () => {
-      socket.emit("join", mockzyUser._id);
-    });
-
-    // Listen for incoming notifications
+    // Already connected in SocketConnection
     socket.on("new-notification", (notif) => {
       if (notif.recipient === mockzyUser._id) {
         dispatch(addNotification(notif));
@@ -84,7 +78,6 @@ const Navbar = () => {
     });
 
     return () => {
-      socket.off("connect");
       socket.off("new-notification");
     };
   }, [mockzyUser, dispatch]);

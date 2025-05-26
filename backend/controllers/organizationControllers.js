@@ -129,7 +129,6 @@ const createUser = expressAsyncHandler(async (req, res) => {
         })
         user.userId = newStudent._id;
         await user.save();
-        console.log(faculty)
         await sendNotification({
             recipients: [new mongoose.Types.ObjectId(faculty)],
             sender: req.user._id,
@@ -143,7 +142,7 @@ const createUser = expressAsyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'Invalid role specified' });
     }
 
-    findDepartment.members.push(user._id)
+    await findDepartment.members.push(user._id)
     await findDepartment.save()
     await findOrganization.save();
 
