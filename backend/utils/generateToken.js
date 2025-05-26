@@ -1,13 +1,17 @@
 import jwt from 'jsonwebtoken'
 
+const generateToken = async (res, userId) => {
 
-res.cookie('jwt', token, {
+    const token = jwt.sign({ userId: userId }, process.env.JWT_SECRET, { expiresIn: '30d' })
+
+    res.cookie('jwt', token, {
     httpOnly: true,
     secure: true,              // Required for cross-site cookies over HTTPS (Render is HTTPS)
     sameSite: 'None',          // Must be 'None' for cross-origin
     maxAge: 30 * 24 * 60 * 60 * 1000
 });
 
+}
 
 
 export default generateToken
