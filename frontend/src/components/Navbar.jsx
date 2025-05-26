@@ -13,8 +13,11 @@ import { setNotifications, addNotification } from "../slices/notificationSlice";
 import { formatDistanceToNow } from "date-fns";
 
 const socket = io("https://mockzy-backend.onrender.com", {
+  autoConnect: false,
   withCredentials: true,
+  transports: ["websocket", "polling"] // Optional but can help avoid transport errors
 });
+
 
 const Navbar = () => {
   const { mockzyUser } = useSelector((state) => state.auth);
