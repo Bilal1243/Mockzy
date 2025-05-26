@@ -142,7 +142,7 @@ const createUser = expressAsyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'Invalid role specified' });
     }
 
-    await findDepartment.members.push(user._id)
+    findDepartment.members.push(user._id)
     await findDepartment.save()
     await findOrganization.save();
 
