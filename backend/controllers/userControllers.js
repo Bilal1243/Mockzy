@@ -18,6 +18,10 @@ const authUser = expressAsyncHandler(async (req, res) => {
 
     const user = await Users.findOne({ email: email })
 
+    if (!user) {
+        return res.status(400).json({ message: 'No user founded for this email' });
+    }
+
     let userData
 
     if (user.role === 'organization') {
