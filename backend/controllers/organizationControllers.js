@@ -100,6 +100,8 @@ const createUser = expressAsyncHandler(async (req, res) => {
 
     let findDepartment = await Departments.findById(department)
 
+    const findFaculty = await Faculties.findById(faculty)
+
     if (role === 'faculty') {
         let newFaculty = await Faculties.create({
             name,
@@ -139,6 +141,7 @@ const createUser = expressAsyncHandler(async (req, res) => {
             type: "newStudent_added",
             link: null
         });
+        findFaculty.students.push(newUser)
         findOrganization.students.push(newUser);
     } else {
         return res.status(400).json({ message: 'Invalid role specified' });
@@ -146,6 +149,7 @@ const createUser = expressAsyncHandler(async (req, res) => {
 
     findDepartment.members.push(user._id)
     await findDepartment.save()
+    await findFaculty.save()
     await findOrganization.save();
 
     res.status(201).json({ message: 'User added successfully' });
