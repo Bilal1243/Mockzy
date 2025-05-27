@@ -9,7 +9,7 @@ const sendNotification = async ({ recipient, sender, title, message, type, link 
     return;
   }
 
-  const recipientId = recipient.toString(); // Ensure it's a string
+  const recipientId = recipient.toString();
 
   const newNotif = await Notification.create({
     recipient: recipientId,
@@ -22,13 +22,12 @@ const sendNotification = async ({ recipient, sender, title, message, type, link 
 
   console.log(`📨 Notification created for recipient: ${recipientId}`);
 
-  // ✅ Check if user is online by userId
   const userOnline = onlineUsers.find(user => user.userId === recipientId);
 
-  console.log(`userOnline : ${{...userOnline}}`)
+  console.log("userOnline:", JSON.stringify(userOnline, null, 2));
 
   if (userOnline) {
-    io.to(userOnline.userId).emit("new-notification", newNotif);
+    io.to(userOnline.socketId).emit("new-notification", newNotif);
     console.log(`✅ Sent live notification to socket: ${userOnline.socketId}`);
   } else {
     console.log(`ℹ️ User ${recipientId} is offline. Notification saved to DB only.`);
