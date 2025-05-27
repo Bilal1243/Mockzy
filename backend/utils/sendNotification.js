@@ -1,7 +1,8 @@
-import { getIO, onlineUsers } from "../socket.js";
+import { getIO, getOnlineUsers } from "../socket.js";
 import Notification from "../models/NotificationModel.js";
 
 const io = getIO();
+const onlineUsers = getOnlineUsers();
 
 const sendNotification = async ({ recipient, sender, title, message, type, link }) => {
   if (!recipient) {
@@ -20,17 +21,15 @@ const sendNotification = async ({ recipient, sender, title, message, type, link 
     link,
   });
 
-  console.log(`📨 Notification created for recipient: ${recipientId}`);
+  console.log(`📨 Notification created for ${recipientId}`);
 
-  const userOnline = onlineUsers.find(user => user.userId === recipientId);
+  const socketId = onlineUsers.get(recipientId); // ⚡ Fast Map lookup
 
-  console.log("userOnline:", JSON.stringify(userOnline, null, 2));
-
-  if (userOnline) {
-    io.to(userOnline.socketId).emit("new-notification", newNotif);
-    console.log(`✅ Sent live notification to socket: ${userOnline.socketId}`);
+  if (socketId) {
+    io.to(socketId).emit("new-notification", newNotif);
+    console.log(`✅ Live notification sent to socket ${socketId}`);
   } else {
-    console.log(`ℹ️ User ${recipientId} is offline. Notification saved to DB only.`);
+    console.log(`ℹ️ User ${recipientId} is offline. Notification stored.`);
   }
 };
 

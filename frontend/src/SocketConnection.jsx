@@ -11,19 +11,18 @@ const SocketConnection = () => {
     if (user?._id) {
       if (!socket.connected) socket.connect();
 
-      // Only after connect, emit join
       socket.on("connect", () => {
-        socket.emit("new-user-add", user._id);
-        socket.emit("join", user._id); // join notification room
+        socket.emit("user-online", user._id); // ✅ Fixed event
+        socket.emit("join", user._id); // Optional: for room-based notifications
       });
 
-      socket.on("get-users", (users) => {
+      socket.on("online-users", (users) => {
         dispatch(setOnlineUsers(users));
       });
     }
 
     return () => {
-      socket.off("get-users");
+      socket.off("online-users");
       socket.off("connect");
       if (socket.connected) socket.disconnect();
     };
@@ -32,23 +31,14 @@ const SocketConnection = () => {
   useEffect(() => {
     const handleFocus = () => {
       if (user?._id) {
-        socket.emit("new-user-add", user._id);
-        socket.emit("join", user._id); // Rejoin on focus
-      }
-    };
-
-    const handleBlur = () => {
-      if (user?._id) {
-        socket.emit("offline", user._id);
+        socket.emit("user-online", user._id); // ✅ Re-emit on focus
+        socket.emit("join", user._id);
       }
     };
 
     window.addEventListener("focus", handleFocus);
-    window.addEventListener("blur", handleBlur);
-
     return () => {
       window.removeEventListener("focus", handleFocus);
-      window.removeEventListener("blur", handleBlur);
     };
   }, [user]);
 

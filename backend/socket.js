@@ -1,71 +1,65 @@
 import { Server } from "socket.io";
 import Users from './models/userModel.js';
 
-let onlineUsers = [];
+const onlineUsers = new Map();
 let io;
 
 const initSocket = (server) => {
-    io = new Server(server, {
-        cors: {
-            origin: "https://mockzy-frontend.onrender.com",
-            credentials: true,
-        },
+  io = new Server(server, {
+    cors: {
+      origin: "https://mockzy-frontend.onrender.com",
+      credentials: true,
+    },
+  });
+
+  io.on("connection", (socket) => {
+    console.log("🟢 New socket connected:", socket.id);
+
+    // ✅ Optional: join personal room for future use
+    socket.on("join", (userId) => {
+      if (userId) {
+        socket.join(userId); // Room join, optional use
+        console.log(`🔔 User ${userId} joined their notification room`);
+      }
     });
 
-    io.on("connection", (socket) => {
-        // ✅ Handle joining for notifications
-        socket.on("join", async (userId) => {
-            if (!userId) return;
-            socket.join(userId); // Join room with user ID
-            console.log(`User ${userId} joined their personal room`);
-        });
+    // ✅ Add user to onlineUsers Map
+    socket.on("user-online", async (userId) => {
+      if (!userId) return;
+      onlineUsers.set(userId, socket.id);
+      await Users.findByIdAndUpdate(userId, { status: "online" });
 
-        // ✅ Track active users for chat
-        socket.on("new-user-add", async (newUserId) => {
-            if (!onlineUsers.some((user) => user.userId === newUserId)) {
-                onlineUsers.push({ userId: newUserId, socketId: socket.id });
-                await Users.findByIdAndUpdate(newUserId, { status: "online" });
-                console.log("New user is here!", onlineUsers);
-            }
-            io.emit("get-users", onlineUsers);
-        });
-
-        // ✅ Handle user disconnect
-        socket.on("disconnect", async () => {
-            const disconnectedUser = onlineUsers.find(
-                (user) => user.socketId === socket.id
-            );
-            onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
-            if (disconnectedUser) {
-                await Users.findByIdAndUpdate(disconnectedUser.userId, {
-                    status: "offline",
-                    lastSeen: new Date(),
-                });
-            }
-            console.log("User disconnected", onlineUsers);
-            io.emit("get-users", onlineUsers);
-        });
-
-        // ✅ Handle manual offline event
-        socket.on("offline", async () => {
-            const offlineUser = onlineUsers.find(
-                (user) => user.socketId === socket.id
-            );
-            onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
-            if (offlineUser) {
-                await Users.findByIdAndUpdate(offlineUser.userId, {
-                    status: "offline",
-                    lastSeen: new Date(),
-                });
-            }
-            console.log("User is offline", onlineUsers);
-            io.emit("get-users", onlineUsers);
-        });
+      console.log(`👤 User ${userId} is now online`);
+      io.emit("online-users", Array.from(onlineUsers.keys())); // Broadcast all online userIds
     });
 
-    return io;
+    // ✅ Handle user disconnect
+    socket.on("disconnect", async () => {
+      let disconnectedUserId = null;
+
+      for (const [userId, sockId] of onlineUsers.entries()) {
+        if (sockId === socket.id) {
+          disconnectedUserId = userId;
+          onlineUsers.delete(userId);
+          break;
+        }
+      }
+
+      if (disconnectedUserId) {
+        await Users.findByIdAndUpdate(disconnectedUserId, {
+          status: "offline",
+          lastSeen: new Date(),
+        });
+        console.log(`🔌 User ${disconnectedUserId} disconnected`);
+        io.emit("online-users", Array.from(onlineUsers.keys()));
+      }
+    });
+  });
+
+  return io;
 };
 
 const getIO = () => io;
+const getOnlineUsers = () => onlineUsers;
 
-export { initSocket, onlineUsers, getIO };
+export { initSocket, getIO, getOnlineUsers };

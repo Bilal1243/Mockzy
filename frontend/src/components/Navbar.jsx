@@ -70,7 +70,6 @@ const Navbar = () => {
   useEffect(() => {
     if (!mockzyUser?._id) return;
 
-    // Already connected in SocketConnection
     socket.on("new-notification", (notif) => {
       if (notif.recipient === mockzyUser._id) {
         dispatch(addNotification(notif));
