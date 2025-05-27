@@ -9,12 +9,19 @@ const SocketConnection = () => {
 
   useEffect(() => {
     if (user?._id) {
-      if (!socket.connected) socket.connect();
+      socket.auth = { userId: user._id };
 
-      socket.on("connect", () => {
-        socket.emit("user-online", user._id); // ✅ Fixed event
-        socket.emit("join", user._id); // Optional: for room-based notifications
-      });
+      if (!socket.connected) {
+        socket.connect();
+      }
+
+      const onConnect = () => {
+        console.log("✅ Socket connected to server");
+        socket.emit("user-online", user._id);
+        socket.emit("join", user._id); 
+      };
+
+      socket.on("connect", onConnect);
 
       socket.on("online-users", (users) => {
         dispatch(setOnlineUsers(users));
@@ -31,7 +38,7 @@ const SocketConnection = () => {
   useEffect(() => {
     const handleFocus = () => {
       if (user?._id) {
-        socket.emit("user-online", user._id); // ✅ Re-emit on focus
+        socket.emit("user-online", user._id);
         socket.emit("join", user._id);
       }
     };

@@ -4,7 +4,7 @@ import { Menu, X, Bell, CheckCircle } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useLogoutUserMutation } from "../slices/userApiSlice";
 import { logout } from "../slices/authSlice";
-import { socket } from "../utils/socket"; 
+import { socket } from "../utils/socket";
 
 import {
   useGetNotificationsQuery,
@@ -68,7 +68,7 @@ const Navbar = () => {
     if (!mockzyUser?._id) return;
 
     const handleNewNotification = (notif) => {
-      if (notif?.recipient?.toString() === mockzyUser._id) {
+      if (notif.recipient === mockzyUser._id) {
         dispatch(addNotification(notif));
       }
     };
@@ -78,7 +78,7 @@ const Navbar = () => {
     return () => {
       socket.off("new-notification", handleNewNotification);
     };
-  }, [mockzyUser, dispatch]);
+  }, [mockzyUser?._id]);
 
   const handleMarkAllAsRead = async () => {
     try {
@@ -92,17 +92,27 @@ const Navbar = () => {
   return (
     <header className="bg-white shadow sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-extrabold text-black">Mockzy</Link>
+        <Link to="/" className="text-2xl font-extrabold text-black">
+          Mockzy
+        </Link>
 
         <div className="hidden md:flex items-center gap-6">
           {linksToShow.map((link) => (
-            <Link key={link.label} to={link.path} className="text-black hover:text-gray-600 font-medium transition">
+            <Link
+              key={link.label}
+              to={link.path}
+              className="text-black hover:text-gray-600 font-medium transition"
+            >
               {link.label}
             </Link>
           ))}
 
           <div className="relative">
-            <button onClick={() => setShowNotifications((prev) => !prev)} className="relative" aria-label="Notifications">
+            <button
+              onClick={() => setShowNotifications((prev) => !prev)}
+              className="relative"
+              aria-label="Notifications"
+            >
               <Bell size={22} />
               {notifications.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">
@@ -115,7 +125,10 @@ const Navbar = () => {
               <div className="absolute right-0 top-8 w-80 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
                 <div className="p-3 border-b flex justify-between items-center">
                   <span className="font-semibold">Notifications</span>
-                  <button onClick={handleMarkAllAsRead} className="text-xs text-blue-600 hover:underline">
+                  <button
+                    onClick={handleMarkAllAsRead}
+                    className="text-xs text-blue-600 hover:underline"
+                  >
                     Mark all as read
                   </button>
                 </div>
@@ -123,7 +136,10 @@ const Navbar = () => {
                   notifications.map((n, i) => (
                     <Link to={n.link} key={i}>
                       <div className="flex items-start gap-2 px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 border-b cursor-pointer">
-                        <CheckCircle className="text-green-500 mt-1" size={16} />
+                        <CheckCircle
+                          className="text-green-500 mt-1"
+                          size={16}
+                        />
                         <div>
                           <p>{n.title}</p>
                           <p className="text-xs">{n.message}</p>
@@ -135,20 +151,29 @@ const Navbar = () => {
                     </Link>
                   ))
                 ) : (
-                  <div className="p-4 text-sm text-center text-gray-500">No notifications</div>
+                  <div className="p-4 text-sm text-center text-gray-500">
+                    No notifications
+                  </div>
                 )}
               </div>
             )}
           </div>
 
-          <button onClick={handleLogout} className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">
+          <button
+            onClick={handleLogout}
+            className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+          >
             Logout
           </button>
         </div>
 
         <div className="md:hidden flex gap-3 items-center">
           <div className="relative">
-            <button onClick={() => setShowNotifications((prev) => !prev)} className="relative" aria-label="Notifications">
+            <button
+              onClick={() => setShowNotifications((prev) => !prev)}
+              className="relative"
+              aria-label="Notifications"
+            >
               <Bell size={22} />
               {notifications.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">
@@ -166,7 +191,12 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t shadow-md px-4 py-3 space-y-3">
           {linksToShow.map((link) => (
-            <Link key={link.label} to={link.path} onClick={() => setMobileMenuOpen(false)} className="block text-black font-medium hover:text-gray-600 transition">
+            <Link
+              key={link.label}
+              to={link.path}
+              onClick={() => setMobileMenuOpen(false)}
+              className="block text-black font-medium hover:text-gray-600 transition"
+            >
               {link.label}
             </Link>
           ))}
