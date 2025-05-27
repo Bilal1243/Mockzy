@@ -25,7 +25,7 @@ const sendNotification = async ({ recipient, sender, title, message, type, link 
   // ✅ Check if user is online by userId
   const userOnline = onlineUsers.find(user => user.userId === recipientId);
 
-  console.log(`userOnline : ${[...userOnline]}`)
+  console.log(`userOnline : ${{...userOnline}}`)
 
   if (userOnline) {
     io.to(userOnline.userId).emit("new-notification", newNotif);
