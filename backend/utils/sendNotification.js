@@ -10,10 +10,9 @@ const sendNotification = async ({ recipient, sender, title, message, type, link 
     return;
   }
 
-  const recipientId = recipient.toString();
 
   const newNotif = await Notification.create({
-    recipient: recipientId,
+    recipient,
     sender,
     title,
     message,
@@ -21,15 +20,15 @@ const sendNotification = async ({ recipient, sender, title, message, type, link 
     link,
   });
 
-  console.log(`📨 Notification created for ${recipientId}`);
+  console.log(`📨 Notification created for ${recipient}`);
 
-  const socketId = onlineUsers.get(recipientId); // ⚡ Fast Map lookup
-
+  const socketId = onlineUsers.get(recipient);
+  console.log(socketId)
   if (socketId) {
-    io.to(socketId).emit("new-notification", newNotif);
-    console.log(`✅ Live notification sent to socket ${socketId}`);
+    io.to(recipient).emit("new-notification", newNotif);
+    console.log(`✅ Live notification sent to user room: ${recipient}`);
   } else {
-    console.log(`ℹ️ User ${recipientId} is offline. Notification stored.`);
+    console.log(`ℹ️ User ${recipient} is offline. Notification stored.`);
   }
 };
 
