@@ -100,8 +100,6 @@ const createUser = expressAsyncHandler(async (req, res) => {
 
     let findDepartment = await Departments.findById(department)
 
-    const findFaculty = await Faculties.findById(faculty.faculty)
-
     if (role === 'faculty') {
         let newFaculty = await Faculties.create({
             name,
@@ -124,6 +122,8 @@ const createUser = expressAsyncHandler(async (req, res) => {
         }
         findOrganization.faculties.push(newUser);
     } else if (role === 'student') {
+        const findFaculty = await Faculties.findById(faculty.faculty)
+
         let newStudent = await Students.create({
             name,
             email,
