@@ -100,7 +100,7 @@ const createUser = expressAsyncHandler(async (req, res) => {
 
     let findDepartment = await Departments.findById(department)
 
-    const findFaculty = await Faculties.findById(faculty)
+    const findFaculty = await Faculties.findById(faculty.faculty)
 
     if (role === 'faculty') {
         let newFaculty = await Faculties.create({
@@ -129,12 +129,12 @@ const createUser = expressAsyncHandler(async (req, res) => {
             email,
             organization,
             department,
-            faculty
+            faculty: faculty._id
         })
         user.userId = newStudent._id;
         await user.save();
         await sendNotification({
-            recipient: faculty,
+            recipient: faculty._id,
             sender: req.user._id,
             title: "New Student has been assigned to you",
             message: `${name} has been assigned to you`,

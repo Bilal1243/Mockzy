@@ -63,6 +63,14 @@ const AddUserScreen = () => {
     }
   };
 
+  const handleFacultyChange = (e) => {
+    const selected = JSON.parse(e.target.value);
+    setFormData((prev) => ({
+      ...prev,
+      faculty: selected,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -185,14 +193,20 @@ const AddUserScreen = () => {
                 </label>
                 <select
                   name="faculty"
-                  value={formData.faculty}
-                  onChange={handleChange}
+                  value={JSON.stringify(formData.faculty)} // ensure it's stringified
+                  onChange={handleFacultyChange}
                   required
                   className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:ring-black focus:border-black"
                 >
                   <option value="">Select a Faculty</option>
                   {faculties.map((faculty) => (
-                    <option key={faculty._id} value={faculty._id}>
+                    <option
+                      key={faculty._id}
+                      value={JSON.stringify({
+                        _id: faculty._id,
+                        faculty: faculty.facultyDetails?._id,
+                      })}
+                    >
                       {faculty?.facultyDetails?.name}
                     </option>
                   ))}
